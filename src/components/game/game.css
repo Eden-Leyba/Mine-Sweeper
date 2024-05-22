@@ -1,4 +1,42 @@
 div.game {
-    margin: 0;
+    margin-top: 5%;   
 }
 
+div.game header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+div.game header .left h1 {
+    font-size: 2em;
+    margin-top: 0;
+    color: #495a26;
+}
+
+
+div.game header .right input[type="button"] {
+    background-color: #495a26;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+div.game header .right select {
+    padding: 9px 20px;
+    font-size: 1.2em;
+    background-color:#c6e589;
+    cursor: pointer;
+    color: #495a26;
+    font-weight: bold;
+}
+
+div.game header .right select option {
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+}

@@ -5,7 +5,7 @@ import Game from "./components/game/game";
 
 function App() {
   return (
-    <Game difficulty={15} />
+    <Game difficultyProp={15} />
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useMemo, forwardRef, useRef, useImperativeHandle, useState} from 'react';
+import React, { useMemo, useEffect, useState} from 'react';
 import Cell, { CellProps } from '../cell/cell';
 import './board.css'
 import { generateRandomNumber } from '../../utils';
@@ -6,7 +6,7 @@ import { generateRandomNumber } from '../../utils';
 export interface BoardProps {
     cellsInRow: number;
     numOfRows: number;
-    numOfBombs: number
+    numOfBombs: number;
 }
 
 export const numOfCells = (props: BoardProps) => 
@@ -31,8 +31,9 @@ const Board: React.FC<BoardProps> = (props) => {
         }
         return cellsData;
     }
+
+    let [cells, setCells] = useState(initCellsData);
     
-    const [cells, setCells] = useState(initCellsData());
 
     const neighbours = (cellNum: number) => {
         /*  Given cellNum i, a neighbour can appear:
@@ -43,7 +44,7 @@ const Board: React.FC<BoardProps> = (props) => {
         const cellsInRow: number = props.cellsInRow;
         const numOfCellsCached: number = numOfCells(props);
         const neighbours = [];
-
+        
         //right
         if(cellNum % cellsInRow != 0) 
             neighbours.push(cellNum+1);
@@ -84,7 +85,12 @@ const Board: React.FC<BoardProps> = (props) => {
         return neighbours;
     }
 
+    // useEffect(() => {
+    //     setCellsinitCellsData();
+    // },[]);
+
     useMemo(() =>{
+        cells = initCellsData();
         
         cellsWithBombs = new Array<number>(numOfCells(props)+1);
         
@@ -106,8 +112,8 @@ const Board: React.FC<BoardProps> = (props) => {
             });
             
         }
-        
-    }, []);
+        console.log(cells);
+    }, [props.numOfBombs]);
 
     const generateRow = (row_num: number) => {
         const row = [];
@@ -157,10 +163,6 @@ const Board: React.FC<BoardProps> = (props) => {
         });
     }
 
-    const restartBoard = () => {
-        setCells(initCellsData());
-    }
-
     const revealAll = () => {
         const newCells = cells.map((cell, index) => {
             cells[index].isRevelead = true;
@@ -169,13 +171,23 @@ const Board: React.FC<BoardProps> = (props) => {
         setCells(newCells);
     }
 
+    const isWin = () => {
+        //count hidden cells
+        
+        const hidden_cells : number = cells.reduce((acc,cur, index) => 
+            (index > 0 && !cur.isRevelead) ? acc+1 : acc
+        , 0);
+        
+        return hidden_cells === props.numOfBombs;
+    }
+
     const handleClick = (cellNum: number) => {
+        console.log(props.numOfBombs);
         const newCells = cells.map((cell, index) => {
             if(index == cellNum) {
                 const newCell = cell;
                 if(!cell.isRevelead) {
                     if(cell.isBomb) {
-                        
                         alert("Game Over");
                         revealAll();
                     }
@@ -187,6 +199,11 @@ const Board: React.FC<BoardProps> = (props) => {
             return cell;
         });
         setCells(newCells);
+        if(isWin()) {
+            alert("You WON!");
+            revealAll();
+        }
+            
     }
 
     const handleContextMenu = (cellNum: number) => {
@@ -207,6 +224,6 @@ const Board: React.FC<BoardProps> = (props) => {
         {generateRows()}
         </div>
     );
-}
+};
 
 export default Board;
